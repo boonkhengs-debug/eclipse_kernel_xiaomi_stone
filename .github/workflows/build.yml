@@ -15,10 +15,9 @@ jobs:
       - name: Build Kernel
         uses: dabao1955/kernel_build_action@main
         with:
-          kernel-url: https://github.com/AcmeUI-Devices/android_kernel_xiaomi_cas
-          kernel-dir: msm-4.19
-          kernel-branch: taffy
-          config: cas_defconfig
+          kernel-url: https://github.com/x1337cn/eclipse_kernel_xiaomi_stone
+          kernel-branch: 16
+          config: stone_defconfig
           arch: arm64
           aosp-gcc: true
           aosp-clang: true
