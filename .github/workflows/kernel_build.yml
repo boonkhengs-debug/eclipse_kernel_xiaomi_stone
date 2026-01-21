@@ -31,8 +31,8 @@ jobs:
           arch: arm64
           android-version: 12
           aosp-clang: true
-          # Optimized Clang for 2026 GKI kernels
-          aosp-clang-version: r450784d
+          # Optimized Clang for GKI kernels
+          aosp-clang-version: r547379
           aosp-gcc: true
           ksu: ${{ github.event.inputs.enable_ksu }}
           ksu-version: ${{ github.event.inputs.ksu_version }}
