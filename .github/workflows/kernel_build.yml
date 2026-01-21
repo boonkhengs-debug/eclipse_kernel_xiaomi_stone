@@ -8,11 +8,6 @@ on:
         required: true
         type: boolean
         default: true
-      ksu_version:
-        description: 'KSU Version (use "main" for latest)'
-        required: true
-        default: 'main'
-        type: string
 
 jobs:
   build:
@@ -29,13 +24,13 @@ jobs:
           kernel-branch: 16
           config: stone_defconfig
           arch: arm64
-          android-version: 12
+          android-version: 16
           aosp-clang: true
           # Optimized Clang for GKI kernels
-          aosp-clang-version: r383902
+          aosp-clang-version: r547379
           aosp-gcc: true
           ksu: ${{ github.event.inputs.enable_ksu }}
-          ksu-version: ${{ github.event.inputs.ksu_version }}
+          ksu-version: 'main'
           disable-lto: true
           anykernel3: true
           # Required for modern Xiaomi Qualcomm devices
@@ -51,7 +46,7 @@ jobs:
           
           # Determine if KSU or CLEAN naming should be used
           if [ "${{ github.event.inputs.enable_ksu }}" = "true" ]; then
-            TAG="KSU-${{ github.event.inputs.ksu_version }}"
+            TAG="KSU"
           else
             TAG="NoKSU"
           fi
@@ -73,11 +68,10 @@ jobs:
           body: |
             Build successfully completed.
             
-            **Device:** Xiaomi Stone
+            **Device:** Stone
             **Source:** https://github.com/boonkhengs-debug/eclipse_kernel_xiaomi_stone
             **Branch:** 16
             **KSU Enabled:** ${{ github.event.inputs.enable_ksu }}
-            **KSU Version:** ${{ github.event.inputs.ksu_version }}
             **Build Date:** $(date +'%Y-%m-%d %H:%M')
           draft: false
           prerelease: false
