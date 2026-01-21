@@ -1,0 +1,85 @@
+name: Xiaomi Stone Kernel Builder
+
+on:
+  workflow_dispatch:
+    inputs:
+      enable_ksu:
+        description: 'Enable KernelSU (KSU)'
+        required: true
+        type: boolean
+        default: true
+      ksu_version:
+        description: 'KSU Version (use "main" for latest)'
+        required: true
+        default: 'main'
+        type: string
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Build Kernel
+        uses: dabao1955/kernel_build_action@main
+        id: build_kernel
+        with:
+          kernel-url: https://github.com/boonkhengs-debug/eclipse_kernel_xiaomi_stone
+          kernel-branch: 16
+          config: stone_defconfig
+          arch: arm64
+          android-version: 12
+          aosp-clang: true
+          # Optimized Clang for 2026 GKI kernels
+          aosp-clang-version: r450784d
+          aosp-gcc: true
+          ksu: ${{ github.event.inputs.enable_ksu }}
+          ksu-version: ${{ github.event.inputs.ksu_version }}
+          disable-lto: true
+          anykernel3: true
+          # Required for modern Xiaomi Qualcomm devices
+          extra-cmd: LLVM=1 LLVM_IAS=1
+
+      - name: Rename and Tag ZIP
+        run: |
+          # Identify the AnyKernel3 zip produced by the action
+          OLD_ZIP=$(ls AnyKernel3-*.zip | head -n 1)
+          
+          # Create timestamp for unique releases
+          TIMESTAMP=$(date +%Y%m%d-%H%M)
+          
+          # Determine if KSU or CLEAN naming should be used
+          if [ "${{ github.event.inputs.enable_ksu }}" = "true" ]; then
+            TAG="KSU-${{ github.event.inputs.ksu_version }}"
+          else
+            TAG="NoKSU"
+          fi
+          
+          # Set the final filename
+          FILENAME="Stone-Kernel-${TAG}-${TIMESTAMP}.zip"
+          mv "$OLD_ZIP" "$FILENAME"
+          
+          # Save variables for the release step
+          echo "RELEASE_TAG=Kernel_${TAG}_${TIMESTAMP}" >> $GITHUB_ENV
+          echo "FINAL_ZIP=$FILENAME" >> $GITHUB_ENV
+
+      - name: Upload to GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ env.FINAL_ZIP }}
+          tag_name: ${{ env.RELEASE_TAG }}
+          name: Xiaomi Stone Kernel (${{ env.RELEASE_TAG }})
+          body: |
+            Build successfully completed.
+            
+            **Device:** Xiaomi Stone
+            **Source:** https://github.com/boonkhengs-debug/eclipse_kernel_xiaomi_stone
+            **Branch:** 16
+            **KSU Enabled:** ${{ github.event.inputs.enable_ksu }}
+            **KSU Version:** ${{ github.event.inputs.ksu_version }}
+            **Build Date:** $(date +'%Y-%m-%d %H:%M')
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
