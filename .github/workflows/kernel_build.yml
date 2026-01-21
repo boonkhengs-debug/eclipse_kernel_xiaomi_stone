@@ -1,4 +1,4 @@
-name: Xiaomi Stone Kernel Builder
+name: Kernel Builder
 
 on:
   workflow_dispatch:
@@ -39,7 +39,7 @@ jobs:
           disable-lto: true
           anykernel3: true
           # Required for modern Xiaomi Qualcomm devices
-          extra-cmd: LLVM=1 LLVM_IAS=1
+          extra-make-args: ["LLVM=1","LLVM_IAS=1"]
 
       - name: Rename and Tag ZIP
         run: |
@@ -69,7 +69,7 @@ jobs:
         with:
           files: ${{ env.FINAL_ZIP }}
           tag_name: ${{ env.RELEASE_TAG }}
-          name: Xiaomi Stone Kernel (${{ env.RELEASE_TAG }})
+          name: Stone Kernel (${{ env.RELEASE_TAG }})
           body: |
             Build successfully completed.
             
