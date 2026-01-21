@@ -32,7 +32,7 @@ jobs:
           android-version: 12
           aosp-clang: true
           # Optimized Clang for GKI kernels
-          aosp-clang-version: r547379
+          aosp-clang-version: r383902
           aosp-gcc: true
           ksu: ${{ github.event.inputs.enable_ksu }}
           ksu-version: ${{ github.event.inputs.ksu_version }}
