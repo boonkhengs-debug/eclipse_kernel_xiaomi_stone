@@ -37,8 +37,12 @@ jobs:
 
       - name: Package, Rename and Tag
         run: |
-          # 1. Enter the directory where the 18 files were found
+          # 0. Enter the directory where the 18 files were found
           cd build/
+
+          # 1. Calculate the date for the release body
+          BUILD_DATE=$(date +'%Y-%m-%d %H:%M')
+          echo "BODY_DATE=$BUILD_DATE" >> $GITHUB_ENV
           
           # 2. Generate naming variables
           TIMESTAMP=$(date +%Y%m%d-%H%M)
@@ -70,7 +74,7 @@ jobs:
             Build successfully completed.
             
             **KSU Enabled:** ${{ github.event.inputs.enable_ksu }}
-            **Build Date:** $(date +'%Y-%m-%d %H:%M')
+            **Build Date:** ${{ env.BODY_DATE }}
           draft: false
           prerelease: false
         env:
