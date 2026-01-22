@@ -7,7 +7,7 @@ on:
         description: 'Enable KernelSU (KSU)'
         required: true
         type: boolean
-        default: true
+        default: false
 
 jobs:
   build:
@@ -34,7 +34,8 @@ jobs:
           anykernel3: true
           # Required for modern Xiaomi Qualcomm devices
           # extra-make-args: '["LLVM=1","LLVM_IAS=1"]'
-
+          extra-make-args: '["CONFIG_DEBUG_INFO_BTF=n"]'
+          
       - name: Package, Rename and Tag
         run: |
           # 0. Enter the directory where the 18 files were found
