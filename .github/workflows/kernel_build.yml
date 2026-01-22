@@ -24,16 +24,16 @@ jobs:
           kernel-branch: 16
           config: stone_defconfig
           arch: arm64
-          android-version: 16
-          aosp-gcc: false
+          android-version: 12
+          aosp-gcc: true
           aosp-clang: true
-          aosp-clang-version: r522817
+          aosp-clang-version: r383902
           ksu: ${{ github.event.inputs.enable_ksu }}
           ksu-version: 'main'
           disable-lto: true
           anykernel3: true
           # Required for modern Xiaomi Qualcomm devices
-          extra-make-args: '["LLVM=1","LLVM_IAS=1"]'
+          # extra-make-args: '["LLVM=1","LLVM_IAS=1"]'
 
       - name: Rename and Tag ZIP
         run: |
