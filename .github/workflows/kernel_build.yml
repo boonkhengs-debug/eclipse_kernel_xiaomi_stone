@@ -35,31 +35,33 @@ jobs:
           # Required for modern Xiaomi Qualcomm devices
           # extra-make-args: '["LLVM=1","LLVM_IAS=1"]'
 
-      - name: Rename and Tag ZIP
+      - name: Package, Rename and Tag
         run: |
-          # Identify the AnyKernel3 zip produced by the action
-          OLD_ZIP=$(ls AnyKernel3-*.zip | head -n 1)
+          # 1. Enter the directory where the 18 files were found
+          cd build/
           
-          # Create timestamp for unique releases
+          # 2. Generate naming variables
           TIMESTAMP=$(date +%Y%m%d-%H%M)
-          
-          # Determine if KSU or CLEAN naming should be used
+          # Logical check for KSU tag
           if [ "${{ github.event.inputs.enable_ksu }}" = "true" ]; then
             TAG="KSU"
           else
             TAG="NoKSU"
           fi
           
-          # Set the final filename
           FILENAME="Stone-Kernel-${TAG}-${TIMESTAMP}.zip"
-          mv "$OLD_ZIP" "$FILENAME"
           
-          # Save variables for the release step
+          # 3. Create the flashable AnyKernel3 ZIP (zipping from INSIDE the folder)
+          zip -r9 "../$FILENAME" *
+          
+          # 4. Export variables for the next step
+          cd ..
           echo "RELEASE_TAG=Kernel_${TAG}_${TIMESTAMP}" >> $GITHUB_ENV
           echo "FINAL_ZIP=$FILENAME" >> $GITHUB_ENV
 
       - name: Upload to GitHub Release
         uses: softprops/action-gh-release@v2
+        if: env.FINAL_ZIP != ''
         with:
           files: ${{ env.FINAL_ZIP }}
           tag_name: ${{ env.RELEASE_TAG }}
@@ -67,9 +69,6 @@ jobs:
           body: |
             Build successfully completed.
             
-            **Device:** Stone
-            **Source:** https://github.com/boonkhengs-debug/eclipse_kernel_xiaomi_stone
-            **Branch:** 16
             **KSU Enabled:** ${{ github.event.inputs.enable_ksu }}
             **Build Date:** $(date +'%Y-%m-%d %H:%M')
           draft: false
