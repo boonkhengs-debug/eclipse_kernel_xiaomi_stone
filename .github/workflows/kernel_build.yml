@@ -25,7 +25,7 @@ jobs:
           config: stone_defconfig
           arch: arm64
           android-version: 16
-          aosp-gcc: true
+          aosp-gcc: false
           aosp-clang: true
           aosp-clang-version: r547379
           ksu: ${{ github.event.inputs.enable_ksu }}
