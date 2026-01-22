@@ -43,7 +43,7 @@ jobs:
           # 2. Generate naming variables
           TIMESTAMP=$(date +%Y%m%d-%H%M)
           # Logical check for KSU tag
-          if [ "${{ github.event.inputs.enable_ksu }}" = "true" ]; then
+          if [[ "${{ github.event.inputs.enable_ksu }}" == "true" ]]; then
             TAG="KSU"
           else
             TAG="NoKSU"
