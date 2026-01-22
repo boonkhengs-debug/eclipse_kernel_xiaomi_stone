@@ -27,7 +27,7 @@ jobs:
           android-version: 16
           aosp-gcc: false
           aosp-clang: true
-          aosp-clang-version: r547379
+          aosp-clang-version: r522817
           ksu: ${{ github.event.inputs.enable_ksu }}
           ksu-version: 'main'
           disable-lto: true
