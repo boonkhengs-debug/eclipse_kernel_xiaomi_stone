@@ -2,12 +2,6 @@ name: Xiaomi Stone Kernel Builder
 
 on:
   workflow_dispatch:
-    inputs:
-      enable_ksu:
-        description: 'Enable KernelSU (KSU)'
-        required: true
-        type: boolean
-        default: false
 
 jobs:
   build:
@@ -28,13 +22,12 @@ jobs:
           aosp-gcc: true
           aosp-clang: true
           aosp-clang-version: r383902
-          ksu: ${{ github.event.inputs.enable_ksu }}
+          ksu: false
           ksu-version: 'main'
           disable-lto: true
           anykernel3: true
           # Required for modern Xiaomi Qualcomm devices
           # extra-make-args: '["LLVM=1","LLVM_IAS=1"]'
-          extra-make-args: '["CONFIG_DEBUG_INFO_BTF=n"]'
           
       - name: Package, Rename and Tag
         run: |
@@ -48,11 +41,7 @@ jobs:
           # 2. Generate naming variables
           TIMESTAMP=$(date +%Y%m%d-%H%M)
           # Logical check for KSU tag
-          if [[ "${{ github.event.inputs.enable_ksu }}" == "true" ]]; then
-            TAG="KSU"
-          else
-            TAG="NoKSU"
-          fi
+          TAG="NoKSU"
           
           FILENAME="Stone-Kernel-${TAG}-${TIMESTAMP}.zip"
           
@@ -73,8 +62,6 @@ jobs:
           name: Stone Kernel (${{ env.RELEASE_TAG }})
           body: |
             Build successfully completed.
-            
-            **KSU Enabled:** ${{ github.event.inputs.enable_ksu }}
             **Build Date:** ${{ env.BODY_DATE }}
           draft: false
           prerelease: false
